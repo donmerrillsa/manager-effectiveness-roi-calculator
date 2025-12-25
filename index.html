@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Effectiveness ROI Calculator (Retail)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            font-size: 14px;
+        }
+        .tab.active {
+            background: #4CAF50;
+            color: white;
+        }
+        .sheet {
+            display: none;
+        }
+        .sheet.active {
+            display: block;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+        .input-row {
+            display: grid;
+            grid-template-columns: 300px 150px 200px;
+            gap: 15px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .label {
+            font-weight: 500;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .calculated {
+            background-color: #e8f5e9;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .total-roi {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            gap: 12px;
+        }
+        .summary-row span {
+            text-align: right;
+            min-width: 180px;
+        }
+        .projection-box {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 2px solid #2196F3;
+        }
+        .projection-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .muted-note {
+            margin-top: 15px;
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            background: #e3f2fd;
+            color: #0d47a1;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="showSheet(0)">Dashboard</button>
+            <button class="tab" onclick="showSheet(1)">Turnover Details</button>
+            <button class="tab" onclick="showSheet(2)">Executive Summary</button>
+        </div>
+
+        <div class="sheet active" id="sheet0">
+            <h1>Manager Effectiveness ROI Calculator (Retail)</h1>
+            <h2>ENTER YOUR DATA - See Real-Time ROI</h2>
+
+            <div class="section">
+                <h2>Enablement & Time Costs <span class="pill">editable inputs</span></h2>
+                <div class="input-row">
+                    <div class="label">External Enablement Fees (One-Time)</div>
+                    <input type="number" id="externalFees" value="2000">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Manager Effectiveness Time/Associate/Month (Hours)</div>
+                    <input type="number" step="0.1" id="managerHours" value="2.5">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Manager Hourly Rate</div>
+                    <input type="number" id="managerRate" value="30">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Associate Participation Time/Month (Hours)</div>
+                    <input type="number" id="employeeHours" value="2">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Avg Associate Hourly Rate</div>
+                    <input type="number" id="employeeRate" value="18">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Admin/HR Support Hours/Month</div>
+                    <input type="number" id="adminHours" value="3">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Admin/HR Hourly Rate</div>
+                    <input type="number" id="adminRate" value="40">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Tools/Platform Cost/Month</div>
+                    <input type="number" id="toolsCost" value="100">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Soft Cost Factor % (optional overhead)</div>
+                    <input type="number" id="softCostFactor" value="30">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Direct Monthly Costs</div>
+                    <div></div>
+                    <div class="calculated" id="directCosts">$0</div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Soft Costs</div>
+                    <div></div>
+                    <div class="calculated" id="softCosts">$0</div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Total Monthly Investment</div>
+                    <div></div>
+                    <div class="calculated" id="totalCoachingCost">$0</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Department Setup</h2>
+                <div class="input-row">
+                    <div class="label">Team Size (Sales Associates)</div>
+                    <input type="number" id="teamSize" value="5">
+                    <div></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Turnover Analysis</h2>
+                <div class="input-row">
+                    <div class="label">Current Turnover %</div>
+                    <input type="number" id="turnoverPct" value="30">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Avg Hire Cost</div>
+                    <input type="number" id="hireCost" value="2500">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Post-Improvement Turnover %</div>
+                    <input type="number" id="postTurnover" value="20">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Annual Hires</div>
+                    <div></div>
+                    <div class="calculated" id="annualHires">0</div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Annual Turnover Cost</div>
+                    <div></div>
+                    <div class="calculated" id="annualCost">$0</div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Quarterly Savings</div>
+                    <div></div>
+                    <div class="calculated" id="quarterlySavings">$0</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Productivity / Sales Impact</h2>
+                <div class="input-row">
+                    <div class="label">Current Sales/Hour</div>
+                    <input type="number" id="salesHour" value="45">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Manager Effectiveness Improvement %</div>
+                    <input type="number" id="coachingLift" value="15">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Store Hours/Week</div>
+                    <input type="number" id="storeHours" value="50">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Monthly Baseline</div>
+                    <div></div>
+                    <div class="calculated" id="monthlyBaseline">$0</div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Post-Improvement Sales/Hour</div>
+                    <div></div>
+                    <div class="calculated" id="postCoaching">$0</div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Monthly Revenue Lift</div>
+                    <div></div>
+                    <div class="calculated" id="revenueLift">$0</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Labor Waste Reduction</h2>
+                <div class="input-row">
+                    <div class="label">Current Waste %</div>
+                    <input type="number" id="wastePercent" value="20">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Post-Improvement Waste %</div>
+                    <input type="number" id="postWaste" value="16">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Monthly Labor Budget</div>
+                    <input type="number" id="laborBudget" value="50000">
+                    <div></div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Current Waste Cost</div>
+                    <div></div>
+                    <div class="calculated" id="currentWaste">$0</div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Post-Improvement Waste Cost</div>
+                    <div></div>
+                    <div class="calculated" id="postWasteCost">$0</div>
+                </div>
+                <div class="input-row">
+                    <div class="label">Monthly Labor Savings</div>
+                    <div></div>
+                    <div class="calculated" id="laborSavings">$0</div>
+                </div>
+            </div>
+
+            <div class="total-roi" style="background-color: #2196F3;">
+                TOTAL MONTHLY GAINS: <span id="totalROI">$0</span>
+            </div>
+
+            <div class="total-roi">
+                NET MONTHLY BENEFIT: <span id="netBenefit">$0</span>
+            </div>
+
+            <div class="total-roi" style="background-color: #FF9800;">
+                ROI PERCENTAGE: <span id="roiPercent">0%</span>
+            </div>
+
+            <div class="section" style="margin-top: 30px; background-color: #e3f2fd;">
+                <h2 style="margin-top: 0;">Cumulative ROI Projections</h2>
+
+                <div class="projection-grid">
+                    <div class="projection-box">
+                        <h3 style="color: #2196F3;">3-Month Results</h3>
+                        <div style="margin-bottom: 8px;">
+                            <strong>Total Gains:</strong> <span id="gains3mo">$0</span>
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            <strong>Total Costs:</strong> <span id="costs3mo">$0</span>
+                        </div>
+                        <div style="margin-bottom: 8px; padding-top: 8px; border-top: 2px solid #ddd;">
+                            <strong style="font-size: 18px;">Net Benefit:</strong> <span id="net3mo" style="font-size: 18px; color: #4CAF50; font-weight: bold;">$0</span>
+                        </div>
+                        <div>
+                            <strong>ROI:</strong> <span id="roi3mo">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="projection-box" style="border-color: #4CAF50;">
+                        <h3 style="color: #4CAF50;">6-Month Results</h3>
+                        <div style="margin-bottom: 8px;">
+                            <strong>Total Gains:</strong> <span id="gains6mo">$0</span>
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            <strong>Total Costs:</strong> <span id="costs6mo">$0</span>
+                        </div>
+                        <div style="margin-bottom: 8px; padding-top: 8px; border-top: 2px solid #ddd;">
+                            <strong style="font-size: 18px;">Net Benefit:</strong> <span id="net6mo" style="font-size: 18px; color: #4CAF50; font-weight: bold;">$0</span>
+                        </div>
+                        <div>
+                            <strong>ROI:</strong> <span id="roi6mo">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="muted-note">
+                    <strong>Note:</strong> Measurable impact is often visible within 3–6 months as manager behaviors become consistent.
+                </div>
+            </div>
+        </div>
+
+        <div class="sheet" id="sheet1">
+            <h1>Turnover ROI Breakdown</h1>
+            <div class="section">
+                <div class="summary-row">
+                    <strong>Quarterly Savings:</strong>
+                    <span id="quarterlyDetail">$0</span>
+                </div>
+                <div class="summary-row">
+                    <strong>Monthly Savings:</strong>
+                    <span id="monthlyDetail">$0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sheet" id="sheet2">
+            <h1>Manager Effectiveness ROI Executive Summary</h1>
+            <div class="section">
+                <div class="total-roi" style="margin-top: 0; background-color: #2196F3;">
+                    TOTAL MONTHLY GAINS: <span id="execTotal">$0</span>
+                </div>
+
+                <h2>Monthly Gains Breakdown:</h2>
+                <div class="summary-row">
+                    <strong>Turnover Savings:</strong>
+                    <span id="execTurnover">$0 /month</span>
+                </div>
+                <div class="summary-row">
+                    <strong>Revenue Lift:</strong>
+                    <span id="execRevenue">$0 /month</span>
+                </div>
+                <div class="summary-row">
+                    <strong>Labor Savings:</strong>
+                    <span id="execLabor">$0 /month</span>
+                </div>
+
+                <h2 style="margin-top: 30px;">Monthly Investment:</h2>
+                <div class="summary-row">
+                    <strong>Total Investment:</strong>
+                    <span id="execCoachingCost">$0 /month</span>
+                </div>
+
+                <div class="total-roi" style="margin-top: 20px;">
+                    NET MONTHLY BENEFIT: <span id="execNetBenefit">$0</span>
+                </div>
+
+                <div class="summary-row" style="margin-top: 20px; font-size: 18px; background: #f0f0f0; padding: 15px;">
+                    <strong>ROI Multiple:</strong>
+                    <span id="roiMultiple">0x return</span>
+                </div>
+            </div>
+
+            <!-- Added projections to Executive Summary -->
+            <div class="section" style="background-color: #e3f2fd;">
+                <h2 style="margin-top: 0;">3-Month and 6-Month Projections</h2>
+
+                <div class="projection-grid">
+                    <div class="projection-box">
+                        <h3 style="color: #2196F3;">3-Month Results</h3>
+                        <div style="margin-bottom: 8px;">
+                            <strong>Total Gains:</strong> <span id="execGains3mo">$0</span>
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            <strong>Total Costs:</strong> <span id="execCosts3mo">$0</span>
+                        </div>
+                        <div style="margin-bottom: 8px; padding-top: 8px; border-top: 2px solid #ddd;">
+                            <strong style="font-size: 18px;">Net Benefit:</strong>
+                            <span id="execNet3mo" style="font-size: 18px; color: #4CAF50; font-weight: bold;">$0</span>
+                        </div>
+                        <div>
+                            <strong>ROI:</strong> <span id="execRoi3mo">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="projection-box" style="border-color: #4CAF50;">
+                        <h3 style="color: #4CAF50;">6-Month Results</h3>
+                        <div style="margin-bottom: 8px;">
+                            <strong>Total Gains:</strong> <span id="execGains6mo">$0</span>
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            <strong>Total Costs:</strong> <span id="execCosts6mo">$0</span>
+                        </div>
+                        <div style="margin-bottom: 8px; padding-top: 8px; border-top: 2px solid #ddd;">
+                            <strong style="font-size: 18px;">Net Benefit:</strong>
+                            <span id="execNet6mo" style="font-size: 18px; color: #4CAF50; font-weight: bold;">$0</span>
+                        </div>
+                        <div>
+                            <strong>ROI:</strong> <span id="execRoi6mo">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="muted-note">
+                    <strong>Finance note:</strong> These projections extend the current monthly estimates; adjust assumptions to match your environment.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatCurrency(num) {
+            return '$' + Math.round(num).toLocaleString('en-US');
+        }
+
+        function showSheet(index) {
+            document.querySelectorAll('.sheet').forEach((sheet, i) => {
+                sheet.classList.toggle('active', i === index);
+            });
+
+            document.querySelectorAll('.tab').forEach((tab, i) => {
+                tab.classList.toggle('active', i === index);
+            });
+        }
+
+        function calculate() {
+            const teamSize = parseFloat(document.getElementById('teamSize').value) || 0;
+            const turnoverPct = parseFloat(document.getElementById('turnoverPct').value) || 0;
+            const hireCost = parseFloat(document.getElementById('hireCost').value) || 0;
+            const postTurnover = parseFloat(document.getElementById('postTurnover').value) || 0;
+            const salesHour = parseFloat(document.getElementById('salesHour').value) || 0;
+            const effectivenessImprovement = parseFloat(document.getElementById('coachingLift').value) || 0;
+            const storeHours = parseFloat(document.getElementById('storeHours').value) || 0;
+            const wastePercent = parseFloat(document.getElementById('wastePercent').value) || 0;
+            const postWaste = parseFloat(document.getElementById('postWaste').value) || 0;
+            const laborBudget = parseFloat(document.getElementById('laborBudget').value) || 0;
+
+            // Turnover
+            const annualHires = teamSize * (turnoverPct / 100);
+            const annualCost = annualHires * hireCost;
+            const postAnnualHires = teamSize * (postTurnover / 100);
+            const postAnnualCost = postAnnualHires * hireCost;
+            const quarterlySavings = (annualCost - postAnnualCost) / 4;
+            const monthlySavings = quarterlySavings / 3;
+
+            // Productivity/Sales
+            const monthlyBaseline = salesHour * storeHours * 4;
+            const postImprovementSales = salesHour * (1 + effectivenessImprovement / 100);
+            const revenueLift = (postImprovementSales - salesHour) * storeHours * 4;
+
+            // Waste
+            const currentWaste = laborBudget * (wastePercent / 100);
+            const postWasteCost = laborBudget * (postWaste / 100);
+            const laborSavings = currentWaste - postWasteCost;
+
+            // Costs
+            const externalFees = parseFloat(document.getElementById('externalFees').value) || 0;
+            const managerHours = parseFloat(document.getElementById('managerHours').value) || 0;
+            const managerRate = parseFloat(document.getElementById('managerRate').value) || 0;
+            const associateHours = parseFloat(document.getElementById('employeeHours').value) || 0;
+            const associateRate = parseFloat(document.getElementById('employeeRate').value) || 0;
+            const adminHours = parseFloat(document.getElementById('adminHours').value) || 0;
+            const adminRate = parseFloat(document.getElementById('adminRate').value) || 0;
+            const toolsCost = parseFloat(document.getElementById('toolsCost').value) || 0;
+            const softCostFactor = parseFloat(document.getElementById('softCostFactor').value) || 0;
+
+            const monthlyExternalFees = externalFees / 12;
+            const managerTimeCost = managerHours * managerRate * teamSize;
+            const associateTimeCost = associateHours * associateRate * teamSize;
+            const adminTimeCost = adminHours * adminRate;
+
+            const directCosts = monthlyExternalFees + managerTimeCost + associateTimeCost + adminTimeCost + toolsCost;
+            const softCosts = directCosts * (softCostFactor / 100);
+            const totalInvestment = directCosts + softCosts;
+
+            // ROI
+            const totalGains = monthlySavings + revenueLift + laborSavings;
+            const netBenefit = totalGains - totalInvestment;
+            const roiPercent = totalInvestment > 0 ? (netBenefit / totalInvestment * 100) : 0;
+            const roiMultiple = totalInvestment > 0 ? (netBenefit / totalInvestment).toFixed(1) : 0;
+
+            // Dashboard fields
+            document.getElementById('annualHires').textContent = annualHires.toFixed(1);
+            document.getElementById('annualCost').textContent = formatCurrency(annualCost);
+            document.getElementById('quarterlySavings').textContent = formatCurrency(quarterlySavings);
+
+            document.getElementById('monthlyBaseline').textContent = formatCurrency(monthlyBaseline);
+            document.getElementById('postCoaching').textContent = '$' + postImprovementSales.toFixed(2);
+            document.getElementById('revenueLift').textContent = formatCurrency(revenueLift);
+
+            document.getElementById('currentWaste').textContent = formatCurrency(currentWaste);
+            document.getElementById('postWasteCost').textContent = formatCurrency(postWasteCost);
+            document.getElementById('laborSavings').textContent = formatCurrency(laborSavings);
+
+            document.getElementById('directCosts').textContent = formatCurrency(directCosts);
+            document.getElementById('softCosts').textContent = formatCurrency(softCosts);
+            document.getElementById('totalCoachingCost').textContent = formatCurrency(totalInvestment);
+
+            document.getElementById('totalROI').textContent = formatCurrency(totalGains);
+            document.getElementById('netBenefit').textContent = formatCurrency(netBenefit);
+            document.getElementById('roiPercent').textContent = Math.round(roiPercent) + '%';
+
+            // Projections (Dashboard)
+            const gains3mo = totalGains * 3;
+            const costs3mo = totalInvestment * 3;
+            const net3mo = gains3mo - costs3mo;
+            const roi3mo = costs3mo > 0 ? (net3mo / costs3mo * 100) : 0;
+
+            const gains6mo = totalGains * 6;
+            const costs6mo = totalInvestment * 6;
+            const net6mo = gains6mo - costs6mo;
+            const roi6mo = costs6mo > 0 ? (net6mo / costs6mo * 100) : 0;
+
+            document.getElementById('gains3mo').textContent = formatCurrency(gains3mo);
+            document.getElementById('costs3mo').textContent = formatCurrency(costs3mo);
+            document.getElementById('net3mo').textContent = formatCurrency(net3mo);
+            document.getElementById('roi3mo').textContent = Math.round(roi3mo) + '%';
+
+            document.getElementById('gains6mo').textContent = formatCurrency(gains6mo);
+            document.getElementById('costs6mo').textContent = formatCurrency(costs6mo);
+            document.getElementById('net6mo').textContent = formatCurrency(net6mo);
+            document.getElementById('roi6mo').textContent = Math.round(roi6mo) + '%';
+
+            // Turnover Details tab
+            document.getElementById('quarterlyDetail').textContent = formatCurrency(quarterlySavings);
+            document.getElementById('monthlyDetail').textContent = formatCurrency(monthlySavings);
+
+            // Executive Summary tab
+            document.getElementById('execTotal').textContent = formatCurrency(totalGains);
+            document.getElementById('execTurnover').textContent = formatCurrency(monthlySavings) + ' /month';
+            document.getElementById('execRevenue').textContent = formatCurrency(revenueLift) + ' /month';
+            document.getElementById('execLabor').textContent = formatCurrency(laborSavings) + ' /month';
+            document.getElementById('execCoachingCost').textContent = formatCurrency(totalInvestment) + ' /month';
+            document.getElementById('execNetBenefit').textContent = formatCurrency(netBenefit) + ' /month';
+            document.getElementById('roiMultiple').textContent = roiMultiple + 'x return (' + Math.round(roiPercent) + '% ROI)';
+
+            // Executive Summary projections (copied)
+            document.getElementById('execGains3mo').textContent = formatCurrency(gains3mo);
+            document.getElementById('execCosts3mo').textContent = formatCurrency(costs3mo);
+            document.getElementById('execNet3mo').textContent = formatCurrency(net3mo);
+            document.getElementById('execRoi3mo').textContent = Math.round(roi3mo) + '%';
+
+            document.getElementById('execGains6mo').textContent = formatCurrency(gains6mo);
+            document.getElementById('execCosts6mo').textContent = formatCurrency(costs6mo);
+            document.getElementById('execNet6mo').textContent = formatCurrency(net6mo);
+            document.getElementById('execRoi6mo').textContent = Math.round(roi6mo) + '%';
+        }
+
+        document.querySelectorAll('input').forEach(function(input) {
+            input.addEventListener('input', calculate);
+        });
+
+        window.addEventListener('load', function() {
+            calculate();
+        });
+    </script>
+</body>
+</html>
